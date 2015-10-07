@@ -1,0 +1,92 @@
+<html>
+<head>
+    <title>Hello WebSocket</title>
+    <link rel="stylesheet" href="lib/css/fileinput.css">
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.css" />
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="lib/bootstrap/js/bootstrap.js"></script>
+    <script src="lib/js/fileinput.js"></script>
+    <script src="lib/js/fileinput_locale_ru.js"></script>
+
+    <script type="text/javascript">
+       $(document).ready(function(){
+           $("#file").fileinput({'showUpload':true, 'allowedFileExtensions':['xls'], 'previewFileType':'any',
+               initialCaption:'Файл с адресами'});
+
+
+           $('#goMail').click(function(){
+
+               var data = new FormData();
+
+               jQuery.each($('#file')[0].files, function(i, file) {
+                   data.append('file', file);
+               });
+
+               data.append('template', $("#template").val());
+               data.append('columns[0].type', "email");
+               data.append('columns[0].name', $("#emailLabel").val());
+               data.append('columns[1].type', "name");
+               data.append('columns[1].name', $("#nameLabel").val());
+
+               $.ajax({
+                   url: "/mail",
+                   type: "POST",
+                   data: data,
+                   cache: false,
+                   contentType: false,
+                   processData: false,
+                   success: function (data) {
+                       if(data == true){
+                           $(".result").css("background", "green");
+                           $(".result").fadeIn();
+                           $(".result").html("Отправлено");
+                           $("#sendForm")[0].reset();
+                           setTimeout(function(){$(".result").fadeOut();  }, 4000);
+                       }
+
+                       else{
+                           $(".result").css("background", "red");
+                           $(".result").fadeIn();
+                           $(".result").html("Что-то не отправлено");
+                           setTimeout(function(){$(".result").fadeOut();  }, 4000);
+                       }
+                   },
+                   error:function (data) {
+                       alert("Ошибка");                   }
+               });
+           });
+
+       });
+
+    </script>
+</head>
+<body>
+<div style = "width:70%; margin:auto;">
+
+    <h1>Настройки рассылки:</h1>
+    <div>
+        <form id = "sendForm">
+            <label style = "margin-top:10px;" class="control-label">Название шаблона на Mandrill</label>
+                <input id="template" type="text" class="form-control">
+
+            <label style = "margin-top:10px;" class="control-label">Заголовок столбца с эмейлами:</label>
+                <input style = "width:300px;" id="emailLabel" type="text" class="form-control">
+
+            <label style = "margin-top:10px;" class="control-label">Заголовок столбца с именами:</label>
+                <input style = "width:300px;" id="nameLabel" type="text" class="form-control">
+
+            <label style = "margin-top:10px;" class="control-label">Ексель файл с адресами</label>
+            <div>
+                <input id="file" type="file" >
+            </div>
+        </form>
+        <button style = "margin-top:20px;" id = "goMail" type="button" data-dismiss="modal" class="btn btn-primary" >Начать рассылку</button>
+        <div class = "result" style = "display:none; margin-top:10px; width:100%; color: #FFF; text-align:center; padding-top:10px; padding-bottom:10px;">
+
+        </div>
+
+    </div>
+
+</div>
+</body>
+</html>

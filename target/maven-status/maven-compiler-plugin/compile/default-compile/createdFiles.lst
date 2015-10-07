@@ -1,0 +1,13 @@
+model\Column.class
+model\MailSubscriber.class
+dto\MailSendForm.class
+model\ColumnType.class
+model\Message.class
+model\MailParams.class
+config\TransactionEmailServiceImpl.class
+config\ExcelImportServiceImpl.class
+config\Application.class
+config\CORSFilter.class
+dto\ColumnDTO.class
+config\ExcelImportService.class
+config\TransactionEmailService.class
